@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  password String
+  role String
+}
+
+model Event {
+  id String @id @default(uuid())
+  name String
+  date DateTime
+  guests Guest[]
+}
+
+model Guest {
+  id String @id @default(uuid())
+  eventId String
+  name String
+  allowedCount Int
+  event Event @relation(fields: [eventId], references: [id])
+  scans GuestScan[]
+}
+
+model GuestScan {
+  id String @id @default(uuid())
+  guestId String
+  gate String?
+  count Int
+  scannedAt DateTime @default(now())
+  guest Guest @relation(fields: [guestId], references: [id])
+}
